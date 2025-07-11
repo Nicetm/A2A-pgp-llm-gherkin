@@ -1,0 +1,45 @@
+[
+    {
+      "id": "TC-001",
+      "hu_id": "HU-123",
+      "title": "Validar login exitoso",
+      "description": "Como usuario registrado, quiero ingresar con mis credenciales para acceder al sistema",
+      "preconditions": ["El usuario está registrado", "La contraseña es válida"],
+      "steps": [
+        "Abrir la página de login",
+        "Ingresar el usuario 'juan@example.com'",
+        "Ingresar la contraseña '12345678'",
+        "Presionar el botón 'Ingresar'"
+      ],
+      "expected_result": "El usuario accede correctamente al panel principal"
+    },
+    {
+      "id": "TC-002",
+      "hu_id": "HU-124",
+      "title": "Validar error en login con contraseña incorrecta",
+      "description": "Como usuario, quiero recibir un mensaje si ingreso mal mi contraseña",
+      "preconditions": ["El usuario está registrado"],
+      "steps": [
+        "Abrir la página de login",
+        "Ingresar el usuario 'ana@example.com'",
+        "Ingresar la contraseña 'incorrecta'",
+        "Presionar el botón 'Ingresar'"
+      ],
+      "expected_result": "Se muestra un mensaje de error indicando contraseña incorrecta"
+    },
+    {
+      "id": "TC-003",
+      "hu_id": "HU-125",
+      "title": "Validar recuperación de contraseña",
+      "description": "Como usuario, quiero recuperar mi contraseña en caso de olvidarla",
+      "preconditions": ["El usuario tiene acceso al correo electrónico registrado"],
+      "steps": [
+        "Abrir la página de login",
+        "Hacer clic en '¿Olvidaste tu contraseña?'",
+        "Ingresar el correo 'luis@example.com'",
+        "Presionar el botón 'Recuperar contraseña'"
+      ],
+      "expected_result": "Se envía un correo de recuperación a 'luis@example.com'"
+    }
+  ]
+  

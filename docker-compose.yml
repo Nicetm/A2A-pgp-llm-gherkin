@@ -1,0 +1,58 @@
+version: "3.9"
+services:
+  api-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-rest
+    container_name: api-rest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - orchestrator
+    environment:
+      - ORCHESTRATOR_URL=http://orchestrator:5004
+    networks:
+      - a2a-net
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.orchestrator
+    container_name: orchestrator
+    ports:
+      - "5004:5004"
+    depends_on:
+      - agente-pgp
+      - agente-clima
+    environment:
+      - AGENT_URLS=http://agente-pgp:5002,http://agente-clima:5003
+    networks:
+      - a2a-net
+
+  agente-pgp:
+    build:
+      context: .
+      dockerfile: Dockerfile.pgp-agent
+    container_name: agente-pgp
+    ports:
+      - "5002:5002"
+    environment:
+      - PGP_AGENT_URL=http://agente-pgp:5002
+    networks:
+      - a2a-net
+
+  agente-clima:
+    build:
+      context: .
+      dockerfile: Dockerfile.clima-agent
+    container_name: agente-clima
+    ports:
+      - "5003:5003"
+    environment:
+      - CLIMA_AGENT_URL=http://agente-clima:5003
+    networks:
+      - a2a-net
+
+networks:
+  a2a-net:
+    driver: bridge
