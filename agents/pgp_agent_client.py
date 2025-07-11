@@ -11,7 +11,7 @@ class PGPAgentClient:
     Cliente para comunicarse con el servicio del Agente PGP
     """
     
-    def __init__(self, base_url: str = "http://localhost:5002"):
+    def __init__(self, base_url: str = "http://localhost:8001"):
         self.base_url = base_url.rstrip('/')
         self.client = httpx.AsyncClient(timeout=30.0)
     
@@ -82,7 +82,7 @@ class PGPAgentClient:
         await self.client.aclose()
 
 # Función de conveniencia para uso síncrono
-def process_hu_sync(hu_id: str, base_url: str = "http://localhost:5002") -> Dict:
+def process_hu_sync(hu_id: str, base_url: str = "http://localhost:8001") -> Dict:
     """
     Versión síncrona para procesar una HU
     

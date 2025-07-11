@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Configuración de la URL del orquestador (puede venir de variable de entorno)
-ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:5004")
+ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8003")
 
 # Crear la aplicación FastAPI
 app = FastAPI(
@@ -72,7 +72,7 @@ async def generate_pgp(request: GeneratePGPRequest):
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 f"{ORCHESTRATOR_URL}/route-hu",
-                json=request.dict()
+                json=request.model_dump()
             )
             response.raise_for_status()
             router_response = response.json()

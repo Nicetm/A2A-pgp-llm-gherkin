@@ -10,7 +10,7 @@ services:
     depends_on:
       - orchestrator
     environment:
-      - ORCHESTRATOR_URL=http://orchestrator:5004
+      - ORCHESTRATOR_URL=http://orchestrator:8003
     networks:
       - a2a-net
 
@@ -20,12 +20,12 @@ services:
       dockerfile: Dockerfile.orchestrator
     container_name: orchestrator
     ports:
-      - "5004:5004"
+      - "8003:8003"
     depends_on:
       - agente-pgp
       - agente-clima
     environment:
-      - AGENT_URLS=http://agente-pgp:5002,http://agente-clima:5003
+      - AGENT_URLS=http://agente-pgp:8001,http://agente-clima:8002
     networks:
       - a2a-net
 
@@ -35,9 +35,9 @@ services:
       dockerfile: Dockerfile.pgp-agent
     container_name: agente-pgp
     ports:
-      - "5002:5002"
+      - "8001:8001"
     environment:
-      - PGP_AGENT_URL=http://agente-pgp:5002
+      - PGP_AGENT_URL=http://agente-pgp:8001
     networks:
       - a2a-net
 
@@ -47,9 +47,9 @@ services:
       dockerfile: Dockerfile.clima-agent
     container_name: agente-clima
     ports:
-      - "5003:5003"
+      - "8002:8002"
     environment:
-      - CLIMA_AGENT_URL=http://agente-clima:5003
+      - CLIMA_AGENT_URL=http://agente-clima:8002
     networks:
       - a2a-net
 

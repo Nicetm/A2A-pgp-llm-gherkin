@@ -36,16 +36,36 @@ Write-Host ""
 
 # Iniciar servicios en nuevas ventanas
 Write-Host "Iniciando Agente PGP en puerto 8001..."
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\Activate.ps1; python -m agents.pgp_agent_service"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", @'
+Write-Host '
+  AGENTE PGP
+' -ForegroundColor Cyan
+$host.UI.RawUI.WindowTitle = 'Agente PGP'; .\venv\Scripts\Activate.ps1; python -m agents.pgp_agent_service
+'@
 
 Write-Host "Iniciando Agente Clima en puerto 8002..."
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\Activate.ps1; python -m agents.clima_agent_service"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", @'
+Write-Host '
+  AGENTE CLIMA
+' -ForegroundColor Yellow
+$host.UI.RawUI.WindowTitle = 'Agente Clima'; .\venv\Scripts\Activate.ps1; python -m agents.clima_agent_service
+'@
 
 Write-Host "Iniciando Orquestador en puerto 8003..."
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\Activate.ps1; python -m core.orchestrator_service"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", @'
+Write-Host '
+  ORQUESTADOR
+' -ForegroundColor Green
+$host.UI.RawUI.WindowTitle = 'Orquestador'; .\venv\Scripts\Activate.ps1; python -m core.orchestrator_service
+'@
 
 Write-Host "Iniciando API REST en puerto 8000..."
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\Activate.ps1; python -m api.rest_service"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", @'
+Write-Host '
+  API REST
+' -ForegroundColor Magenta
+$host.UI.RawUI.WindowTitle = 'API REST'; .\venv\Scripts\Activate.ps1; python -m api.rest_service
+'@
 
 Write-Host ""
 Write-Host "   ¡Todos los servicios han sido iniciados!"

@@ -7,6 +7,8 @@ from typing import List, Dict, Optional
 import json
 import logging
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # LLM via LangChain + Ollama
 from langchain_ollama import ChatOllama
@@ -76,7 +78,7 @@ Según la historia XX-XXX el formato Gherkin es:
 
 # Definir el AgentCard para este agente
 # Configurar URL del agente desde variable de entorno
-AGENT_URL = os.getenv("PGP_AGENT_URL", "http://localhost:5002")
+AGENT_URL = os.getenv("PGP_AGENT_URL", "http://localhost:8001")
 
 AGENT_CARD = AgentCard(
     name="Agente PGP",
@@ -182,4 +184,4 @@ async def jsonrpc(request: dict):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5002) 
+    uvicorn.run(app, host="0.0.0.0", port=8001) 

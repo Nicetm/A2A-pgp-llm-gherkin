@@ -30,7 +30,7 @@ class ClimaResponse(BaseModel):
     message: Optional[str] = None
 
 # Configurar URL del agente desde variable de entorno
-AGENT_URL = os.getenv("CLIMA_AGENT_URL", "http://localhost:5003")
+AGENT_URL = os.getenv("CLIMA_AGENT_URL", "http://localhost:8002")
 
 AGENT_CARD = AgentCard(
     name="Agente Clima",
@@ -82,4 +82,4 @@ async def process_hu(request: HURequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5003) 
+    uvicorn.run(app, host="0.0.0.0", port=8002) 

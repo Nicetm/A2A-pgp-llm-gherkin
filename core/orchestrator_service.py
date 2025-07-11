@@ -8,12 +8,14 @@ import httpx
 import os
 import logging
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # URLs de los agentes registrados (pueden venir de env o docker-compose)
-AGENT_URLS = os.getenv("AGENT_URLS", "http://localhost:5002,http://localhost:5003").split(",")
+AGENT_URLS = os.getenv("AGENT_URLS", "http://localhost:8001,http://localhost:8002").split(",")
 
 app = FastAPI(
     title="Orquestador Agentic RAG",
@@ -131,4 +133,4 @@ async def route_hu(request: HURequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5004) 
+    uvicorn.run(app, host="0.0.0.0", port=8003) 
