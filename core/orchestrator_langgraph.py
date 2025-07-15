@@ -128,7 +128,8 @@ HU:
             hu_text = f"{hu_data.get('title', '')} {hu_data.get('description', '')}"
             logging.info(f"[Orquestador] Procesando HU: {hu_id} -> {hu_text}")
 
-            # Deja que el LLM decida la herramienta
+            # Dejar que el LLM decida la herramienta
+            # result = self.react_agent.invoke([{"role": "user", "content": hu_text}])
             result = self.react_agent.invoke({"messages": [{"role": "user", "content": hu_text}]})
 
             return result
