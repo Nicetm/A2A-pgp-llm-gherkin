@@ -10,14 +10,6 @@ class Message(BaseModel):
     parts: List[MessagePart]
 
 
-# --- Estructura general de una solicitud JSON-RPC ---
-class A2ARequest(BaseModel):
-    jsonrpc: str
-    method: str
-    id: Optional[str]
-    params: Optional[Dict]  # usado como base flexible
-
-
 # --- Solicitudes específicas con estructura interna validada ---
 class SendTaskParams(BaseModel):
     message: Message

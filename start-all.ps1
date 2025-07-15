@@ -56,7 +56,7 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", @'
 Write-Host '
   ORQUESTADOR
 ' -ForegroundColor Green
-$host.UI.RawUI.WindowTitle = 'Orquestador'; .\venv\Scripts\Activate.ps1; python -m core.orchestrator_service
+$host.UI.RawUI.WindowTitle = 'Orquestador'; .\venv\Scripts\Activate.ps1; python -m core.orchestrator_langgraph
 '@
 
 Write-Host "Iniciando API REST en puerto 8000..."

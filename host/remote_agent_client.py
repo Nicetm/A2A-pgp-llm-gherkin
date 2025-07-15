@@ -36,4 +36,8 @@ class RemoteAgentClient:
         url = f"{self.base_url}/jsonrpc"
         response = requests.post(url, json=payload)
         response.raise_for_status()
-        return response.json().get("result") or response.json().get("error")
+        data = response.json()
+        if isinstance(data, dict):
+            return data.get("result") or data.get("error")
+        else:
+            return data

@@ -40,6 +40,19 @@
         "Presionar el botón 'Recuperar contraseña'"
       ],
       "expected_result": "Se envía un correo de recuperación a 'luis@example.com'"
+    },
+    {
+      "id": "TC-004",
+      "hu_id": "HU-200",
+      "title": "Consultar clima en Santiago",
+      "description": "Como usuario, quiero conocer el clima actual y la temperatura en Santiago para planificar mis actividades",
+      "preconditions": ["El usuario tiene acceso a internet"],
+      "steps": [
+        "Abrir la aplicación de clima",
+        "Seleccionar la ubicación Santiago",
+        "Visualizar la temperatura y las condiciones actuales"
+      ],
+      "expected_result": "Se muestra el clima actual y la temperatura en Santiago"
     }
   ]
   

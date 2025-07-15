@@ -1,45 +1,10 @@
-### agents/task_manager.py
-import json
-import traceback
-
-from core.task_base import TaskManager
-from core.custom_types import (
-    JSONRPCResponse,
-    JSONRPCSuccess,
-    JSONRPCError,
-    TaskState,
-)
+# agents/task_manager.py
 
 # Esta clase manejará la lógica para transformar casos de prueba en PGPs en lenguaje Gherkin
-class PGPTargetAgent(TaskManager):
+class PGPTargetAgent:
     def __init__(self):
-        super().__init__()
+        pass
 
-    def on_send_task(self, request) -> JSONRPCResponse:
-        try:
-            # Extrae el contenido del mensaje desde la estructura esperada
-            message = request.params.message.parts[0].text
-            test_cases = json.loads(message)
-            pgp_output = self.generate_pgp_from_test_cases(test_cases)
-
-            return JSONRPCResponse(
-                id=request.id,
-                result=JSONRPCSuccess(
-                    state=TaskState.COMPLETED,
-                    message=pgp_output,
-                )
-            )
-        except Exception as e:
-            import traceback
-            return JSONRPCResponse(
-                id=request.id,
-                error=JSONRPCError(
-                    code=-32000,
-                    message="Error al procesar on_send_task",
-                    data=traceback.format_exc(),
-                )
-            )
-    
     def generate_pgp_from_test_cases(self, test_cases: list[dict]) -> str:
         scenarios = []
 

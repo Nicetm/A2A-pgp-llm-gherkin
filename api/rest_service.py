@@ -8,6 +8,7 @@ import httpx
 import logging
 import os
 from dotenv import load_dotenv
+from fastapi.responses import JSONResponse
 
 # Cargar variables de entorno
 load_dotenv()
@@ -27,9 +28,6 @@ app = FastAPI(
 )
 
 # Configurar JSON con indentación para respuestas más legibles
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
-
 @app.middleware("http")
 async def format_json_response(request, call_next):
     response = await call_next(request)
@@ -74,6 +72,7 @@ async def generate_pgp(request: GeneratePGPRequest):
                 f"{ORCHESTRATOR_URL}/route-hu",
                 json=request.model_dump()
             )
+            print(f"[LangGraph] Response: {response.json()}")  
             response.raise_for_status()
             router_response = response.json()
             gherkin_content = router_response.get("gherkin_content", "")

@@ -17,6 +17,7 @@ from langchain_core.prompts import ChatPromptTemplate
 # Importar la lógica de generación de PGP clásica
 from agents.task_manager import PGPTargetAgent
 from agents.agent_card import AgentCard, AgentSkill, AgentCapabilities
+from fastapi.responses import JSONResponse
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -95,6 +96,10 @@ async def health_check():
     """Endpoint de salud del servicio"""
     return {"status": "healthy", "service": "pgp-agent"}
 
+@app.get("/.well-known/agent.json")
+async def agent_json():
+    return JSONResponse(content=AGENT_CARD.model_dump())
+
 @app.post("/process-hu", response_model=PGPResponse)
 async def process_hu(request: HURequest):
     """
@@ -162,14 +167,6 @@ async def process_hu(request: HURequest):
             detail=f"Error interno procesando HU: {str(e)}"
         )
 
-@app.get("/process-hu/{hu_id}", response_model=PGPResponse)
-async def process_hu_get(hu_id: str):
-    """
-    Procesa una HU usando GET (carga test_cases desde archivo)
-    """
-    request = HURequest(hu_id=hu_id)
-    return await process_hu(request)
-
 @app.get("/agent-card")
 async def get_agent_card():
     """Devuelve la AgentCard de este agente (REST)"""
@@ -177,10 +174,34 @@ async def get_agent_card():
 
 @app.post("/jsonrpc")
 async def jsonrpc(request: dict):
-    """Método JSON-RPC para obtener la AgentCard"""
-    if request.get("method") == "get_agent_card":
-        return {"result": AGENT_CARD.dict()}
-    return {"error": {"code": -32601, "message": "Method not found"}}
+    method = request.get("method")
+    if method == "get_agent_card":
+        return {"result": AGENT_CARD.model_dump()}
+    elif method == "tasks/send":
+        params = request.get("params", {})
+        message = params.get("message", {})
+        text = ""
+        if isinstance(message, dict) and "parts" in message:
+            text = message["parts"][0]["text"]
+        else:
+            text = str(message)
+        try:
+            test_cases = json.loads(text)
+            if not isinstance(test_cases, list) or not all(isinstance(tc, dict) for tc in test_cases):
+                raise ValueError
+        except Exception:
+            return {"error": {"code": -32000, "message": "El mensaje debe ser una lista de diccionarios HU válidos"}}
+        hu_id = test_cases[0].get("hu_id") if test_cases else None
+        if not hu_id:
+            return {"error": {"code": -32000, "message": "No se pudo extraer hu_id del mensaje"}}
+        req = HURequest(hu_id=hu_id, test_cases=test_cases, skill="pgp")
+        resp = await process_hu(req)
+        if hasattr(resp, "model_dump"):
+            return {"result": resp.model_dump()}
+        else:
+            return {"result": resp}
+    else:
+        return {"error": {"code": -32601, "message": "Method not found"}}
 
 if __name__ == "__main__":
     import uvicorn

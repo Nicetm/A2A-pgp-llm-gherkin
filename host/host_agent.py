@@ -70,33 +70,42 @@ class HostAgent:
                         return client
         return None
 
-    def send_task_by_skill(self, skill_id: str, message: str) -> str:
+    def send_task_by_skill(self, skill_id: str, message: str) -> dict:
         """
         Envía una tarea a un agente que soporte la habilidad indicada.
         Args:
             skill_id (str): ID de la habilidad requerida.
             message (str): Mensaje o payload de la tarea.
         Returns:
-            str: Resultado de la operación o mensaje de error.
+            dict: Resultado de la operación o mensaje de error.
         """
         client = self.get_client_by_skill(skill_id)
         if not client:
-            return f"Error: No agent supports skill '{skill_id}'."
+            return {
+                "status": "error",
+                "gherkin_content": f"No agent supports skill '{skill_id}'.",
+                "message": "No se encontró agente para la skill solicitada"
+            }
 
         task_id = str(uuid.uuid4())
         session_id = "session-xyz"
 
         try:
             result = client.send_task(task_id, session_id, message)
-            state = result.get("status", {}).get("state", "unknown")
-            if state == TaskState.COMPLETED:
-                return f"Task {task_id} completed with message: {result}"
-            elif state == TaskState.INPUT_REQUIRED:
-                return f"Task {task_id} needs more input: {result}"
+            if isinstance(result, dict):
+                return result
             else:
-                return f"Task {task_id} ended with state={state}, result={result}"
+                return {
+                    "status": "success",
+                    "gherkin_content": result,
+                    "message": "PGP generado exitosamente"
+                }
         except Exception as exc:
-            return f"Remote agent call failed: {exc}"
+            return {
+                "status": "error",
+                "gherkin_content": f"Remote agent call failed: {exc}",
+                "message": "Error llamando al agente remoto"
+            }
 
     def send_task_by_hu(self, hu_id: str) -> str:
         """

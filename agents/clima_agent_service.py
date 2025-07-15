@@ -7,6 +7,8 @@ from typing import List, Dict, Optional
 import logging
 import os
 from agents.agent_card import AgentCard, AgentSkill, AgentCapabilities
+import json
+from fastapi.responses import JSONResponse
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,11 +52,40 @@ async def health_check():
 async def get_agent_card():
     return AGENT_CARD
 
+@app.get("/.well-known/agent.json")
+async def agent_json():
+    return JSONResponse(content=AGENT_CARD.model_dump())
+
 @app.post("/jsonrpc")
 async def jsonrpc(request: dict):
-    if request.get("method") == "get_agent_card":
+    method = request.get("method")
+    if method == "get_agent_card":
         return {"result": AGENT_CARD.dict()}
-    return {"error": {"code": -32601, "message": "Method not found"}}
+    elif method == "tasks/send":
+        params = request.get("params", {})
+        message = params.get("message", {})
+        text = ""
+        if isinstance(message, dict) and "parts" in message:
+            text = message["parts"][0]["text"]
+        else:
+            text = str(message)
+        try:
+            test_cases = json.loads(text)
+            if not isinstance(test_cases, list) or not all(isinstance(tc, dict) for tc in test_cases):
+                raise ValueError
+        except Exception:
+            return {"error": {"code": -32000, "message": "El mensaje debe ser una lista de diccionarios HU válidos"}}
+        hu_id = test_cases[0].get("hu_id") if test_cases else None
+        if not hu_id:
+            return {"error": {"code": -32000, "message": "No se pudo extraer hu_id del mensaje"}}
+        req = HURequest(hu_id=hu_id, test_cases=test_cases, skill="clima")
+        resp = await process_hu(req)
+        if hasattr(resp, "model_dump"):
+            return {"result": resp.model_dump()}
+        else:
+            return {"result": resp}
+    else:
+        return {"error": {"code": -32601, "message": "Method not found"}}
 
 @app.post("/process-hu", response_model=ClimaResponse)
 async def process_hu(request: HURequest):

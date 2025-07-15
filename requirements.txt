@@ -2,10 +2,6 @@ fastapi
 uvicorn
 python-dotenv
 sse-starlette
-httpx
-langchain
-langgraph
-langchain_ollama
 pydantic
 typer[all]
 requests
